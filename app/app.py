@@ -7,8 +7,35 @@ from src.features import add_features
 
 @st.cache_resource
 def load_model():
-    return joblib.load(os.path.join(BASE, "models", "best_model.joblib"))
+    path = os.path.join(BASE, "models", "churn_model.joblib")
+    try:
+        m = joblib.load(path)
+        if hasattr(m, "named_steps"):     
+            return m
+    except Exception:
+        pass
+
+    from sklearn.compose import ColumnTransformer
+    from sklearn.preprocessing import OneHotEncoder, StandardScaler
+    from sklearn.pipeline import Pipeline
+    from sklearn.linear_model import LogisticRegression
+
+    df = pd.read_csv(os.path.join(BASE, "data", "telco.csv"))
+    df["TotalCharges"] = pd.to_numeric(df["TotalCharges"], errors="coerce").fillna(0)
+    y = (df["Churn"] == "Yes").astype(int)
+    X = add_features(df.drop(columns=["customerID", "Churn"]))
+    cat = X.select_dtypes(include="object").columns.tolist()
+    num = [c for c in X.columns if c not in cat]
+    prep = ColumnTransformer([
+        ("num", StandardScaler(), num),
+        ("cat", OneHotEncoder(handle_unknown="ignore", sparse_output=False), cat),
+    ])
+    pipe = Pipeline([("prep", prep),
+                     ("model", LogisticRegression(max_iter=1000, class_weight="balanced"))])
+    return pipe.fit(X, y)
+
 model = load_model()
+st.caption(f"Loaded model type: {type(model).__name__}")
 
 PLAYBOOK = {
     "New & No Commitment": "Offer 10% off for a 12-month contract. Owner: Retention call team.",
