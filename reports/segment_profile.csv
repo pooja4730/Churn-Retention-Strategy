@@ -1,0 +1,6 @@
+segment,customers,avg_tenure,avg_bill,actual_churn,predicted_risk,monthly_revenue,revenue_at_risk
+New & No Commitment,1994,4.47,58.22,0.51,0.13,116086.5,59204.0
+Unsupported Fiber Users,1001,37.77,90.05,0.41,0.32,90140.15,36957.0
+Steady Others,1446,26.53,54.94,0.17,0.23,79440.6,13505.0
+Loyal Long-Term,2418,56.27,64.19,0.06,0.32,155206.8,9312.0
+"High Bill, Low Value",184,37.09,82.84,0.25,0.11,15242.55,3811.0
