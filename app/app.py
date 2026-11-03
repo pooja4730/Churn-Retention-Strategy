@@ -5,7 +5,10 @@ sys.path.append(BASE)
 import streamlit as st, pandas as pd, joblib
 from src.features import add_features
 
-model = joblib.load(os.path.join(BASE, "models", "churn_model.joblib"))
+@st.cache_resource
+def load_model():
+    return joblib.load(os.path.join(BASE, "models", "best_model.joblib"))
+model = load_model()
 
 PLAYBOOK = {
     "New & No Commitment": "Offer 10% off for a 12-month contract. Owner: Retention call team.",
@@ -50,6 +53,11 @@ with c3:
     monthly = st.number_input("Monthly charges", 0.0, 200.0, 85.0)
 
 if st.button("Predict", type="primary"):
+    if internet == "No":
+        sec = backup = protect = support = tv = movies = "No internet service"
+    if phone == "No":
+        multi = "No phone service"
+
     row = pd.DataFrame([{
         "gender": gender, "SeniorCitizen": senior, "Partner": partner,
         "Dependents": dependents, "tenure": tenure, "PhoneService": phone,
@@ -72,8 +80,20 @@ if st.button("Predict", type="primary"):
 
     pre, clf = model.named_steps["prep"], model.named_steps["model"]
     Xt = pre.transform(row)
+    if hasattr(Xt, "toarray"):
+        Xt = Xt.toarray()
     names = pre.get_feature_names_out()
-    contrib = pd.Series(clf.coef_[0] * Xt[0], index=names)
+
+    if hasattr(clf, "coef_"):                      # logistic regression
+        contrib = pd.Series(clf.coef_[0] * Xt[0], index=names)
+    else:                                          # XGBoost / tree models
+        import shap
+        sv = shap.TreeExplainer(clf).shap_values(Xt)
+        if isinstance(sv, list):                   # older sklearn forests
+            sv = sv[1]
+        sv = sv[0, :, 1] if getattr(sv, "ndim", 2) == 3 else sv[0]
+        contrib = pd.Series(sv, index=names)
+
     drivers = contrib.sort_values(key=abs, ascending=False).head(5)
     st.subheader("Why this score? (top 5 drivers)")
     st.bar_chart(drivers)
