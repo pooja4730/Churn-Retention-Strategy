@@ -4,9 +4,9 @@ Predict which telecom customers are likely to churn, understand why, and recomme
 
 | Deliverable | Link |
 |---|---|
-| Presentation (PPT) | [add link] |
-| Working demo | [add link] |
-| Project video | [add link] |
+| Presentation (PPT) | https://1drv.ms/p/c/e8a8c1093a07042f/IQDbz1X-Jx9bR4MK3cggu1WVAdZGkvuE_2I85_Csvx0bMTI?e=P10OjV |
+| Working demo | https://customer-churn-retention-strategy.streamlit.app/ |
+| Project video | https://onedrive.live.com/?photosData=%2Fshare%2FE8A8C1093A07042F%21s368b554604f94c8a9af4b36a0f94ea8f%3Fithint%3Dvideo%26e%3DjjlZRu%26migratedtospo%3Dtrue&cid=E8A8C1093A07042F&redeem=aHR0cHM6Ly8xZHJ2Lm1zL3YvYy9lOGE4YzEwOTNhMDcwNDJmL0lRQkdWWXMyLVFTS1RKcjBzMm9QbE9xUEFaYzFIckJMMDk3ZzZicXhnVllaRHlJP2U9ampsWlJ1&view=8 |
 | Insights report | [reports/](reports/) |
 
 ---
